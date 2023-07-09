@@ -1,0 +1,6 @@
+.python-version
+__pycache__
+credentials.json
+token.json
+package
+lambda_function.py
