@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import datetime
 import json
 import os.path
@@ -12,15 +10,19 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 from aws_utils import AwsUtils
+from slack_utils import SlackMessage
 
 
 class GoogleCalendar:
-    def __init__(self, scopes, calendar_id, maxResults, slack_webhook):
+    def __init__(
+        self, scopes, calendar_id, maxResults, slack_utils, slack_webhook=None
+    ):
         # If modifying these scopes, delete the file token.json.
         self.scopes = scopes
         self.calendar_id = calendar_id
         self.maxResults = maxResults
         self.slack_webhook = slack_webhook
+        self.slack_utils = slack_utils
         self.credentials = "credentials.json"
         self.token_file = "token.json"
         self.now = datetime.datetime.utcnow()
@@ -60,7 +62,10 @@ class GoogleCalendar:
                     ).date()
                     >= self.now.date()
                 ):
-                    send_data_list.append((st_dateTime + " " + summary))
+                    trans_st_dateTime = datetime.datetime.strptime(
+                        st_dateTime, "%Y-%m-%dT%H:%M:%S%z"
+                    ).strftime("%Y-%m-%d %H:%M:%S")
+                    send_data_list.append((trans_st_dateTime + " " + summary))
             elif st_date:
                 end = datetime.datetime.strptime(
                     ed_date, "%Y-%m-%d"
@@ -129,6 +134,7 @@ class GoogleCalendar:
             else:
                 title, contents = self.parse_leaves(events)
                 # self.send_slack(title, contents)
+                self.slack_utils.send_message_for_post(title, contents)
 
         except HttpError as error:
             print("An error occurred: %s" % error)
@@ -148,6 +154,10 @@ if __name__ == "__main__":
     roo_leave_calendar_id = aws_utils.get_parameter("roo_leave_id")
     calendar_id = "{}@group.calendar.google.com".format(roo_leave_calendar_id)
     maxResults = 100
-    slack_webhook_path = aws_utils.get_parameter("slack_webhook")
-    slack_webhook = "https://hooks.slack.com/services/{}".format(slack_webhook_path)
-    GoogleCalendar(scopes, calendar_id, maxResults, slack_webhook).main()
+    # slack_webhook_path = aws_utils.get_parameter("slack_webhook")
+    # slack_webhook = "https://hooks.slack.com/services/{}".format(slack_webhook_path)
+    # GoogleCalendar(scopes, calendar_id, maxResults, slack_webhook).main()
+    dev_slack_token = aws_utils.get_parameter("dev_slack_token")
+    slack_channel_name = aws_utils.get_parameter("slack_channel_name")
+    slack_utils = SlackMessage(dev_slack_token, slack_channel_name)
+    GoogleCalendar(scopes, calendar_id, maxResults, slack_utils).main()
