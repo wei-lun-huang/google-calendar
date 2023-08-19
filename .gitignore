@@ -3,5 +3,7 @@ __pycache__
 credentials.json
 token.json
 package
-lambda_function.py
+_lambda_function.py
 my_deployment_package.zip
+.DS_Store
+.vscode/
