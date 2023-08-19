@@ -30,7 +30,7 @@ jobs:
           zip -r ../lambda.zip .
           cd ..
           zip -r lambda.zip ./lambda_function.py ./aws_utils.py ./slack_utils.py
-      - name: Install AWS CLI using npm
+      - name: Install AWS CLI
         run: |
           npm install -g aws-cli
       - name: Configure AWS credentials
