@@ -40,5 +40,6 @@ jobs:
           aws configure set aws_region ${{ secrets.AWS_REGION }}
       - name: Upload to AWS Lambda
         run: |
-          aws lambda update-function-code --function-name=bruce-github-actions-test --zip-file=fileb://lambda.zip
+          ls
+          # aws lambda update-function-code --function-name=bruce-github-actions-test --zip-file=fileb://lambda.zip
 
