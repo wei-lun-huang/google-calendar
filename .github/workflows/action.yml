@@ -35,8 +35,9 @@ jobs:
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set aws_region ${{ secrets.AWS_REGION }}
-      - name: Upload to AWS Lambda
-        run: |
-          set -x
           aws lambda update-function-code --function-name=bruce-github-actions-test --zip-file=fileb://lambda.zip
+      # - name: Upload to AWS Lambda
+      #   run: |
+      #     set -x
+      #     aws lambda update-function-code --function-name=bruce-github-actions-test --zip-file=fileb://lambda.zip
 
