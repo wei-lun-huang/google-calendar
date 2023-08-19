@@ -31,6 +31,9 @@ jobs:
           cd ..
           zip -r lambda.zip ./lambda_function.py ./aws_utils.py ./slack_utils.py
       - name: Configure AWS credentials
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
