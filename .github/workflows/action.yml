@@ -35,9 +35,9 @@ jobs:
           npm install -g aws-cli
       - name: Configure AWS credentials
         run: |
-          aws configure set aws-access-key-id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws-secret-access-key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set aws-region ${{ secrets.AWS_REGION }}
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set aws_region ${{ secrets.AWS_REGION }}
       - name: Upload to AWS Lambda
         run: |
           aws lambda update-function-code --function-name=bruce-github-actions-test --zip-file=fileb://lambda.zip
