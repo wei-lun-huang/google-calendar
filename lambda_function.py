@@ -139,6 +139,8 @@ class GoogleCalendar:
                 return
             else:
                 title, contents = self.parse_leaves(events)
+                if not contents:
+                    return
                 self.slack_utils.send_message_for_post(title, contents)
 
         except HttpError as error:
