@@ -1,0 +1,48 @@
+name: Main workflow
+# Triggers the workflow on push or pull request events
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - develop
+      - release
+      - master
+    types: [opened, synchronize, closed]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  lambda:
+    name: Update Lambda
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          pip install --target ./package -r ./pip-requirements.txt
+      - name: Zip files
+        run: |
+          cd package
+          zip -r ../lambda.zip .
+          cd ..
+          zip -r lambda.zip ./lambda_function.py ./aws_utils.py ./slack_utils.py
+      - name: Upload to lambda
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+        run: |
+          aws lambda update-function-code --function-name=bruce-github-actions-test --zip-file=fileb://lambda.zip
+
+
