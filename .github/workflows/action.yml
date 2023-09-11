@@ -29,7 +29,7 @@ jobs:
           cd package
           zip -r ../lambda.zip .
           cd ..
-          zip -r lambda.zip ./lambda_function.py ./aws_utils.py ./slack_utils.py
+          zip -r lambda.zip ./lambda_function.py ./aws_utils.py ./slack_utils.py ./config
       - name: Configure AWS credentials
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
